@@ -10,25 +10,47 @@ export default class App extends React.Component {
       super(props)
       this.state = {
         isLoading: true,
-        city: null,
-        state: null,
-        stateCode: null,
-        country: null,
-        countryCode: null,
-        brief: null
+        allowLocation: true,
       }
   }
 
   
 
-  getCovidData(newState){
+  getLocation(){
+    const {localLat, localLong} = localStorage.getItem('localLocation');
+    const { lat, long } = this.state;
+    if(localLat === lat && localLong === long ){
+
+    }else{
+      localStorage.setItem('localLocation', {localLat: this.state.lat, localLong: this.state.long});
+      let locationURL = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=3a9950e91847442ab69b7c1a9733b192`
+      axios
+        .get(locationURL)
+        .then(res => {
+            return res.data.results[0]
+        })
+        .then(data => {
+            console.log(data)
+            console.log(data.components.state)
+            if(typeof data !== 'undefined'){  
+              this.setState({
+                  city: data.components.city,
+                  state: data.components.state,
+                  stateCode: data.components.state_code,
+                  country: data.components.country,
+                  countryCode: data.components.country_code
+              })
+                
+            }
+        })
+    }
     const covidURL = `https://www.trackcorona.live/api`
     
     if(this.state.lat !== null && this.state.long !== 'undefined'){
       const {lat, long} = this.state;
 
       console.log("Latitude is :", lat);
-      console.log("Longitude is :", long);
+      console.log("Longitude is :", long); 
 
 
       let locationURL = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=3a9950e91847442ab69b7c1a9733b192`
@@ -118,13 +140,7 @@ export default class App extends React.Component {
     const covidURL = `https://www.trackcorona.live/api`
     axios.get(`${covidURL}/travel`)
       .then(res => {
-        res.data.data.map((item, key) => {
-          if(this.state.country === item.location){
-            this.setState({
-              brief: item.data,
-            })
-          }
-        })
+        
       })
       .catch(err => console.log(err))
   }
@@ -132,20 +148,21 @@ export default class App extends React.Component {
   componentDidMount() {
     if(navigator.geolocation){
       navigator.geolocation.getCurrentPosition((position) => {
-        this.setState({ lat: position.coords.latitude, long: position.coords.longitude })     
-        this.getCovidData(this.state) 
+        this.setState({ lat: position.coords.latitude, long: position.coords.longitude });
+        if(localStorage.getItem('localLocation')!= null || localStorage.getItem('localLocation') !== 'undefined'){
+          localStorage.setItem('localLocation', {localLat: this.state.lat, localLong: this.state.long});
+        }
+        this.getLocation();
       },(err)=>{
         // User didn't allowed to access location
-        console.log('Please help us to get your location.')
+        console.log('Please help us to get your location.');
+        this.setState({ allowLocation: false });
       });
-    }
-    
-    
-
-    
+    }   
 }
 
   render(){
+    const { isLoading } = this.state;
     return (
       <div className="App">
 
