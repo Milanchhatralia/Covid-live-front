@@ -1,176 +1,90 @@
 import axios from 'axios'
 import React from 'react';
+import { Container, Row, Col } from 'react-bootstrap';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './sass/allstyle.scss';
 
-import CovidLive from './components/covidlive.component'
+import City from './components/city.component'
+import State from './components/state.component'
+import Country from './components/country.component'
 
 export default class App extends React.Component {
 
-  constructor(props){
-      super(props)
-      this.state = {
-        isLoading: true,
-        allowLocation: true,
-      }
-  }
-
-  
-
-  getLocation(){
-    const {localLat, localLong} = localStorage.getItem('localLocation');
-    const { lat, long } = this.state;
-    if(localLat === lat && localLong === long ){
-
-    }else{
-      localStorage.setItem('localLocation', {localLat: this.state.lat, localLong: this.state.long});
-      let locationURL = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=3a9950e91847442ab69b7c1a9733b192`
-      axios
-        .get(locationURL)
-        .then(res => {
-            return res.data.results[0]
-        })
-        .then(data => {
-            console.log(data)
-            console.log(data.components.state)
-            if(typeof data !== 'undefined'){  
-              this.setState({
-                  city: data.components.city,
-                  state: data.components.state,
-                  stateCode: data.components.state_code,
-                  country: data.components.country,
-                  countryCode: data.components.country_code
-              })
-                
-            }
-        })
-    }
-    const covidURL = `https://www.trackcorona.live/api`
-    
-    if(this.state.lat !== null && this.state.long !== 'undefined'){
-      const {lat, long} = this.state;
-
-      console.log("Latitude is :", lat);
-      console.log("Longitude is :", long); 
-
-
-      let locationURL = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=3a9950e91847442ab69b7c1a9733b192`
-      
-      axios
-        .get(locationURL)
-        .then(res => {
-            return res.data.results[0]
-        })
-        .then(data => {
-            console.log(data)
-            console.log(data.components.state)
-            if(typeof data !== 'undefined'){  
-              this.setState({
-                  city: data.components.city,
-                  state: data.components.state,
-                  stateCode: data.components.state_code,
-                  country: data.components.country,
-                  countryCode: data.components.country_code
-              })
-                
-            }
-        }).then(() => {
-          const enableCORS = `https://cors-anywhere.herokuapp.com/`
-          const stateURL = `${covidURL}/provinces/${this.state.state}`
-          const countryURL = `${covidURL}/countries/${this.state.countryCode}`
-          let cityURL = null;
-          if(this.state.city !== null && this.state.city !== 'undefined'){
-            cityURL = `${covidURL}/cities/${this.state.city}`
-          }
-
-          return Promise.all([
-                    fetch(enableCORS+cityURL).then(res => {
-                      return res.json()
-                    }).catch(err => {
-                      // change state for city
-                      console.log("problem fetching city")
-                      
-                    }),
-                    fetch(enableCORS+stateURL).then(res => {
-                      return res.json()
-                    }).catch(err =>{
-                      // state for State
-                      console.log("problem fetvhing State")
-                      
-                    }),
-                    fetch(enableCORS+countryURL).then(res => {
-                      return res.json()
-                    }).catch(err => (
-                      //  Country State
-                      console.log("Problem fetching Country")
-
-                    ))
-                  ]).then(([...responses]) => {
-                      console.log(responses);
-                  }).catch((err) => {
-                      console.log(err);
-                  });
-
-          // return axios.all([cityURL, stateURL, countryURL]).then(axios.spread((...responses) => {
-          //         let cityData = responses[0]
-          //         let stateData = responses[1]
-          //         let countryData = responses[2]
-          //         console.log(cityData)
-          //         console.log(stateData);
-          //         console.log(countryData);
-                  
-                  
-          //       }))
-          //       .catch(err => {
-
-          //       })
-
-
-        }).then(data => {
-          console.log(data)
-        })
-        .catch(err => {
-            if(err){
-                return "Please enter your region"
-            }
-        })
-    }
-  }
-
-  componentWillMount() {
-    const covidURL = `https://www.trackcorona.live/api`
-    axios.get(`${covidURL}/travel`)
-      .then(res => {
-        
-      })
-      .catch(err => console.log(err))
-  }
-
-  componentDidMount() {
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.setState({ lat: position.coords.latitude, long: position.coords.longitude });
-        if(localStorage.getItem('localLocation')!= null || localStorage.getItem('localLocation') !== 'undefined'){
-          localStorage.setItem('localLocation', {localLat: this.state.lat, localLong: this.state.long});
+    constructor(props) {
+        super(props)
+        this.state = {
+            isLoading: true,
+            allowLocation: true,
         }
-        this.getLocation();
-      },(err)=>{
-        // User didn't allowed to access location
-        console.log('Please help us to get your location.');
-        this.setState({ allowLocation: false });
-      });
-    }   
+    }
+
+    getLocation() {
+        const { lat, long } = this.state;
+        let locationURL = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${long}&key=3a9950e91847442ab69b7c1a9733b192`
+        axios
+            .get(locationURL)
+            .then(res => {
+                let data = res.data.results[0].components;
+                if (typeof data !== 'undefined') {
+                    console.log(data)
+                    this.setState({
+                        city: typeof data.city !== 'undefined' ? data.city : data.residential,
+                        state: data.state,
+                        stateCode: data.state_code,
+                        country: data.country,
+                        countryCode: data.country_code,
+                        isLoading: false
+                    });
+                }
+            })
+            .catch(err => {
+                this.setState({ error: true, err });
+            });
+    }
+
+    getLocationData = () => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            this.setState({ lat: position.coords.latitude, long: position.coords.longitude });
+            this.getLocation();
+        }, (err) => {
+            // User didn't allowed to access location
+            console.log('Please help us to get your location.');
+            this.setState({ allowLocation: false });
+        });
+    }
+
+    componentDidMount() {
+        if (navigator.geolocation) {
+            this.getLocationData()
+        }
+    }
+
+    render() {
+        const { isLoading } = this.state;
+        return (
+            <div className="App">
+
+                <header className="">
+
+                </header>
+                <Container style={mt}>
+                    <div className="cl-cardContainer">
+                        { isLoading ? (
+                            <Row><h1>Loading...</h1></Row>
+                        ) : (
+                            <Row>
+                                <Col md={12} lg={4} className="px-2"><City city={this.state.city} /></Col>
+                                <Col md={12} lg={4} className="px-2"><State state={this.state.state} stateCode={this.state.stateCode} /></Col>
+                                <Col md={12} lg={4} className="px-2"><Country country={this.state.country} countryCode={this.state.countryCode} /></Col>
+                            </Row>
+                        )}
+                    </div>
+                    
+                </Container>
+            </div>)
+    }
 }
 
-  render(){
-    const { isLoading } = this.state;
-    return (
-      <div className="App">
-
-        <header className="">
-          
-        </header>
-        <CovidLive />
-      </div>)
-  }
+const mt = {
+    marginTop: '34px'
 }
-
