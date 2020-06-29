@@ -1,10 +1,13 @@
-import {Component} from 'react';
+import React, {Component} from 'react';
+import { Col } from 'react-bootstrap'
 
 export default class Country extends Component{
-    constructor(props){
-        super(props)
-        this.state={
-            
-        }
+    
+    render() {
+        return(
+            <div className="cl-regionCard">
+                <p>{this.props.country}</p>
+            </div>
+        )
     }
 }
