@@ -1,5 +1,5 @@
 import React from 'react';
-function Loader(props) {
+const Loader = props => {
     return(
         <div className="loader">
             <div style={load(props)} className="bar"></div>
