@@ -1,3 +1,4 @@
+@import 'mixin';
 *{
     box-sizing: border-box;
 }
@@ -6,50 +7,96 @@ body{
 }
 
 .cl-cardContainer{
-    width: 80%;
+    width: 87%;
     margin: 0 auto;
 }
 
 .cl-regionCard{
     border-radius: 12px;
     background-color: #ffffff;
-    padding: 18px 24px;
+    padding: 18px;
     font-family: 'Montserrat';
     box-shadow: 0px 45px 50px -20px rgba(0, 0, 0, 0.1);
+    .flag{ margin-right: 10px; vertical-align: sub; }
     .cl-regionName{
-        margin-bottom: 0;
+        display: inline;
+        // margin-bottom: 0;
         font-size: 18px;
         color: #bbbbbb;
-        position: relative;
         overflow: hidden;
-        &:after{
+    }
+    .cl-tested{
+        position: absolute;
+        top: 18px;
+        right: 26px;
+        background: rgba(182,133,77,.0627451);
+        padding: 4px 8px;
+        color: rgba(182,133,77,.6);
+        font-size: 14px;
+        border-radius: 3px;
+        &::before{
             content: "";
             background-image: linear-gradient(to left, #ffffff 10%, transparent);
             position: absolute;
             height: 100%;
-            width: 25%;
-            right: 0;
+            width: 40px ;
+            left: -40px;
             top: 0;
         }
+        span{ color: #b6854d; font-weight: 500;}
     }
     .cl-dataContainer{
-        flex: 0 0 50%;
+        padding: 4px 12px;
         span{ font-size: 14px; color: #bbbbbb; }
-        h2{ 
+        h3,h4{ 
             font-family: Roboto;
-            color: #29306b;
+            // color: #29306b;
             margin: -2px 0 0 -2px;
             transition: all ease-in 0.3s;
         }
     }
+    .clc-data{
+        h3,h4{ 
+            display: inline;
+            color: #888888;
+        }
+        span{ display: block;}
+        .delta-confirmed{ color: #ff7070; }
+        .delta-recovered{ color: #52bf68; }
+    }
+    .clc-million{
+        padding-left: 16px;
+        padding-right: 16px;
+        background-color: #fff6f6;
+        border-radius: 3px;
+    }
+    .cl-active{ 
+        background-color: #f7f7ff; 
+        border-radius: 3px;
+        h4{ color: #5353de;}
+    }
+    .cl-recovered{ 
+        h4{ color: #52bf68; }
+    }
+    .cl-confirmed{
+        h4{ color: #ff7070; }
+    }
+    .cl-deceased{
+        h4{ color: #cccccc; }
+    }
+    .cl-testesperkilo{
+        background-color: #fdfde6; 
+        border-radius: 3px;
+        h4{ color: #908725;}
+        span{ display: inline; }
+    }
 }
-
-
 
 .loader {
     position: relative;
     height: 3px;
     width: 40px;
+    margin-top: 6px;
     overflow:hidden;
     .bar {
         width: 100%;
@@ -69,4 +116,10 @@ body{
     50% { left: -80%; }
     75% { left: 80%; }
     100% { left: -80%; }
+}
+
+@include breakpoint-down(sm) {
+    .delta{ display: block; margin-top: 4px;}
+    .cl-cardContainer{ width: 95%; }
+    .cl-dataContainer { padding: 6px 12px !important; }
 }

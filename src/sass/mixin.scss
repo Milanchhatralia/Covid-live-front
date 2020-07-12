@@ -1,0 +1,29 @@
+$grid-breakpoints: (
+  "xs": 0,
+  "sm": 576px,
+  "md": 768px,
+  "lg": 992px,
+  "xl": 1200px
+);
+
+@mixin breakpoint-down($breakpoint) {
+	$width: map-get($grid-breakpoints, $breakpoint);
+	@media only screen and (max-width: $width) {
+		@content;
+	}
+}
+
+@mixin breakpoint-up($breakpoint) {
+	$width: map-get($grid-breakpoints, $breakpoint);
+	@media only screen and (min-width: $width) {
+		@content;
+	}
+}
+
+@mixin breakpoint-between($bpMin, $bpMax) {
+    $wMin: map-get($grid-breakpoints, $bpMin);
+    $wMax: map-get($grid-breakpoints, $bpMax);
+    @media only screen and (min-width: $wMin) and (max-width: $wMax) {
+        @content;
+    }
+}
