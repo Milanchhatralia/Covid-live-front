@@ -67,7 +67,6 @@ export default class App extends React.Component {
                             <Col xs={12}>
                                 <h1>:(<br/>Please allow location access...</h1>  
                             </Col>
-                            
                         )}
                         </Row>
                     ) : (
