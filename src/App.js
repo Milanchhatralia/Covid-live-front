@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React from 'react';
-import { Container, Row } from 'react-bootstrap';
+import { Container, Row, Col } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './sass/allstyle.scss';
 
@@ -26,12 +26,7 @@ export default class App extends React.Component {
                 if (typeof data !== 'undefined') {
                     console.log(data)
                     this.setState({
-                        // city: typeof data.city !== 'undefined' ? data.city : data.residential,
                         regionData: data,
-                        // state: data.state,
-                        // stateCode: data.state_code,
-                        // country: data.country,
-                        // countryCode: data.country_code,
                         isLoading: false
                     });
                 }
@@ -69,7 +64,10 @@ export default class App extends React.Component {
                         { allowLocation ? (
                             <PageLoader />
                         ):(
-                            <h1>Please allow location access...</h1>  
+                            <Col xs={12}>
+                                <h1>:(<br/>Please allow location access...</h1>  
+                            </Col>
+                            
                         )}
                         </Row>
                     ) : (
