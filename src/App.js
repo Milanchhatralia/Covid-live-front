@@ -1,13 +1,11 @@
 import axios from 'axios'
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './sass/allstyle.scss';
 
-import City from './components/city.component'
-import State from './components/state.component'
-import Country from './components/country.component'
-
+import PageLoader from './components/pageLoading.component'
+import CovidLive from './components/covidlive.component'
 export default class App extends React.Component {
 
     constructor(props) {
@@ -28,11 +26,12 @@ export default class App extends React.Component {
                 if (typeof data !== 'undefined') {
                     console.log(data)
                     this.setState({
-                        city: typeof data.city !== 'undefined' ? data.city : data.residential,
-                        state: data.state,
-                        stateCode: data.state_code,
-                        country: data.country,
-                        countryCode: data.country_code,
+                        // city: typeof data.city !== 'undefined' ? data.city : data.residential,
+                        regionData: data,
+                        // state: data.state,
+                        // stateCode: data.state_code,
+                        // country: data.country,
+                        // countryCode: data.country_code,
                         isLoading: false
                     });
                 }
@@ -48,7 +47,7 @@ export default class App extends React.Component {
             this.getLocation();
         }, (err) => {
             // User didn't allowed to access location
-            console.log('Please help us to get your location.');
+            console.log('Please allow location access to get your region.');
             this.setState({ allowLocation: false });
         });
     }
@@ -60,26 +59,23 @@ export default class App extends React.Component {
     }
 
     render() {
-        const { isLoading } = this.state;
+        const { isLoading, allowLocation, regionData } = this.state;
         return (
             <div className="App">
-
-                <header className="">
-
-                </header>
                 <Container style={mt}>
                     <div className="cl-cardContainer">
-                        { isLoading ? (
-                            <Row><h1>Loading...</h1></Row>
-                        ) : (
-                            <Row>
-                                <Col md={12} lg={4} className="px-2"><City city={this.state.city} /></Col>
-                                <Col md={12} lg={4} className="px-2"><State state={this.state.state} stateCode={this.state.stateCode} /></Col>
-                                <Col md={12} lg={4} className="px-2"><Country country={this.state.country} countryCode={this.state.countryCode} /></Col>
-                            </Row>
+                    { isLoading ? (
+                        <Row style={whileLoading(this.state)}>
+                        { allowLocation ? (
+                            <PageLoader />
+                        ):(
+                            <h1>Please allow location access...</h1>  
                         )}
+                        </Row>
+                    ) : (
+                        <CovidLive regionData={regionData} />
+                    )}
                     </div>
-                    
                 </Container>
             </div>)
     }
@@ -87,4 +83,12 @@ export default class App extends React.Component {
 
 const mt = {
     marginTop: '34px'
+}
+
+const whileLoading = (state) => {
+    let isLoading = state.isLoading ? '50' :'';
+    return{
+        marginTop: `${isLoading}vh`,
+        transform: `translateY(-${isLoading}%)`,
+    }
 }
