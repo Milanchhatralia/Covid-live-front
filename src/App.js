@@ -1,8 +1,9 @@
 import axios from 'axios'
 import React from 'react';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Container, Row, Col, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './sass/allstyle.scss';
+import {userIP} from './Utlis/userIP';
 
 import PageLoader from './components/pageLoading.component'
 import CovidLive from './components/covidlive.component'
@@ -42,14 +43,35 @@ export default class App extends React.Component {
             this.getLocation();
         }, (err) => {
             // User didn't allowed to access location
-            console.log('Please allow location access to get your region.');
+            console.log('Sorry, Geolocation is not supported by this browser.');
             this.setState({ allowLocation: false });
+        },{ enableHighAccuracy: true, maximumAge: 10000 });
+    }
+
+    revokePermission = () => {
+        navigator.permissions.revoke({name:'geolocation'}).then(function(result) {
+            
         });
     }
 
     componentDidMount() {
-        if (navigator.geolocation) {
-            this.getLocationData()
+        if (navigator) { 
+            this.getLocationData();
+            // navigator.permissions.query({name:'geolocation'}).then(result => {
+            //     if (result.state === 'granted') {
+            //         this.getLocationData()
+            //     } else if (result.state === 'prompt') {
+            //         this.getLocationData()
+            //     } else if (result.state === 'denied') {
+            //         this.setState({ allowLocation: false });
+            //     }
+            //     result.onchange = result => {
+            //         console.log(result)
+            //     }
+            // });
+        }else{
+            console.log('Sorry, Geolocation is not supported by this browser.');
+            this.setState({ geoLocError: true });
         }
     }
 
@@ -65,7 +87,12 @@ export default class App extends React.Component {
                             <PageLoader />
                         ):(
                             <Col xs={12}>
-                                <h1>:(<br/>Please allow location access...</h1>  
+                                <h1>:(
+                                    <br/>
+                                    Please allow location access...
+                                    <br/>
+                                    {/* <Button variant="primary" onClick={this.getLocationData()}>Give Permission</Button>{' '} */}
+                                    </h1>  
                             </Col>
                         )}
                         </Row>
