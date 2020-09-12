@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { covid19API, countryURI, search } from '../Utlis/URI';
+import { covid19API, countryURI, searchRegion } from '../Utlis/URI';
 
 const fetchCovidCityData = async (city) => {
     return await axios.get(`${covid19API}/city/${city}`).then(res => {
@@ -63,7 +63,7 @@ const fetchCovidCountryData = async(country) => {
 
 const fetchRegionDetail = async(region) => {
     if (region.length > 0) {
-        return await axios.get(`${search}/${region}`).then(res => {
+        return await axios.get(`${searchRegion}/${region}`).then(res => {
             // console.log(res.data);
             return res.data;
         })
