@@ -3,7 +3,6 @@ import React from 'react';
 import { Container, Row, Col, Button } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './sass/allstyle.scss';
-import {userIP} from './Utlis/userIP';
 
 import PageLoader from './components/pageLoading.component'
 import CovidLive from './components/covidlive.component'
@@ -14,6 +13,7 @@ export default class App extends React.Component {
         this.state = {
             isLoading: true,
             allowLocation: true,
+            geoLocError: false,
         }
     }
 
@@ -25,7 +25,6 @@ export default class App extends React.Component {
             .then(res => {
                 let data = res.data.results[0].components;
                 if (typeof data !== 'undefined') {
-                    console.log(data)
                     this.setState({
                         regionData: data,
                         isLoading: false
@@ -44,31 +43,23 @@ export default class App extends React.Component {
         }, (err) => {
             // User didn't allowed to access location
             console.log('Sorry, Geolocation is not supported by this browser.');
-            this.setState({ allowLocation: false });
         },{ enableHighAccuracy: true, maximumAge: 10000 });
-    }
-
-    revokePermission = () => {
-        navigator.permissions.revoke({name:'geolocation'}).then(function(result) {
-            
-        });
     }
 
     componentDidMount() {
         if (navigator) { 
-            this.getLocationData();
-            // navigator.permissions.query({name:'geolocation'}).then(result => {
-            //     if (result.state === 'granted') {
-            //         this.getLocationData()
-            //     } else if (result.state === 'prompt') {
-            //         this.getLocationData()
-            //     } else if (result.state === 'denied') {
-            //         this.setState({ allowLocation: false });
-            //     }
-            //     result.onchange = result => {
-            //         console.log(result)
-            //     }
-            // });
+            navigator.permissions.query({name:'geolocation'}).then((result) => {
+                if (result.state === 'granted') {
+                    this.getLocationData();
+                } else if (result.state === 'prompt') {
+                    this.getLocationData();
+                } else if (result.state === 'denied') {
+                    this.setState({ allowLocation: false });
+                }
+                result.onchange = function() {
+
+                }
+            });
         }else{
             console.log('Sorry, Geolocation is not supported by this browser.');
             this.setState({ geoLocError: true });
@@ -76,22 +67,22 @@ export default class App extends React.Component {
     }
 
     render() {
-        const { isLoading, allowLocation, regionData } = this.state;
+        const { isLoading, allowLocation, geoLocError, regionData } = this.state;
         return (
             <div className="App">
                 <Container style={mt}>
                     <div className="cl-cardContainer">
                     { isLoading ? (
                         <Row style={whileLoading(this.state)}>
-                        { allowLocation ? (
+                        { !geoLocError ? (
                             <PageLoader />
                         ):(
                             <Col xs={12}>
                                 <h1>:(
                                     <br/>
-                                    Please allow location access...
+                                    Sorry, Geolocation is not supported by this browser.
                                     <br/>
-                                    {/* <Button variant="primary" onClick={this.getLocationData()}>Give Permission</Button>{' '} */}
+                                    {/* <Button variant="primary" onClick={this.revokePermission()}>Give Permission</Button>{' '} */}
                                     </h1>  
                             </Col>
                         )}
