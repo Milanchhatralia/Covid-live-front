@@ -142,6 +142,40 @@ body{
         transform: translateY(-50%);
         cursor: pointer;
     }
+
+    .cl-search-result{
+        position: absolute;
+        width: 100%;
+        top: 64px;
+        z-index: 1;
+        ul{
+            width: 100%;
+            max-height: 240px;
+            padding: 0.5rem 0;
+            margin: 0;
+            border-radius: 8px;
+            background-color: white;
+            overflow: scroll;
+            -webkit-box-shadow: 1px 1px 32px 0px rgba(0,0,0,0.16);
+            -moz-box-shadow: 1px 1px 32px 0px rgba(0,0,0,0.16);
+            box-shadow: 1px 1px 32px 0px rgba(0,0,0,0.16);
+            .cl-regionItem{
+                list-style: none;
+                padding: 0.6rem 1rem;
+                color: #b6b6b6;
+                cursor: pointer;
+                &:hover{
+                    background-color: #fafafa;
+                }
+                .cl-region-code{
+                    position: absolute;
+                    right: 1rem;
+                    color: #ff7070;
+                    text-transform: uppercase;
+                }
+            }
+        }
+    }
 }
 
 .loader {
