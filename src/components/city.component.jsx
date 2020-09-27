@@ -9,7 +9,7 @@ const City = ({city, tested, isCityLoading, active, confirmed, deltaconfirmed, r
         <Col md={12} lg={4} className="px-2 mt-3">
             <div className="cl-regionCard">
                 <p className="cl-regionName">{city}</p>
-                <span className="cl-tested">Tested: <span>{tested}</span></span>
+                <span className="cl-tested">Tested: <span>{numAbb(tested)}</span></span>
                 <Loader isLoading={isCityLoading}/>
                 <Row className="m-0">
                     <Col xs={6} className="cl-dataContainer cl-active mt-3">

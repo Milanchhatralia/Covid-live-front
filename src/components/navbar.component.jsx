@@ -3,6 +3,7 @@ import SearchIcon from '../images/search-black.svg';
 import { ReactComponent as Logo } from '../images/covid-live.svg';
 import { fetchRegionDetail } from '../Utlis/getCovidData'
 import { debounce } from '../Utlis/optimize';
+import { fetchCovidStateData, fetchCovidCountryData } from '../Utlis/getCovidData';
 
 export default class Navbar extends Component{
     constructor(props){
@@ -27,29 +28,61 @@ export default class Navbar extends Component{
     }
 
     onBlur = () => {
-        this.setState({ focused: false })
+        setTimeout(()=>{
+            this.setState({ focused: false })
+        },200)
     }
 
-    regionClick(){
-
+    regionClick = (e) => {
+        const { searchResult } = this.state;
+        const {changeCity, changeState, changeCountry} = this.props;
+        let index = [...e.target.parentElement.children].indexOf(e.target);
+        let item = searchResult[index];
+        if (item.type === 'city') {
+            changeCity(item);
+            if(item.state !== 'undefined') {
+                fetchCovidStateData(item.state).then((res) => {
+                    changeState(res.data);
+                }).catch((err)=>{
+                    console.log(err);
+                });
+            }
+            if(item.country){
+                fetchCovidCountryData(item.country).then((res) => {
+                    changeCountry(res.data);
+                }).catch((err)=>{
+                    console.log(err);
+                });
+            }
+        }else{
+            changeState(item);
+            if(item.country){
+                fetchCovidCountryData(item.country).then((res) => {
+                    changeCountry(res.data);
+                }).catch((err)=>{
+                    console.log(err);
+                });
+            }
+        }
+        console.log(item);
     }
 
     resultList = () => {
-        let {searchResult} = this.state;
+        let { searchResult } = this.state;
         let listItems = searchResult.map((item) =>
-            item.type === 'city' 
-            ? <li className='cl-regionItem' data-item={item.type} data-city={item.city} data-state={item.state} onClick={this.regionClick}>
+            item.type === 'city'
+            ? <li className='cl-regionItem'>
                 { item.city }
                 { item.state !== 'undefined' ? <span className="cl-region-code text-capitalize">{item.state}</span> :""}
             </li>
-            : <li className='cl-regionItem' data-item={item.type} data-state={item.state} onClick={this.regionClick}>
+            : <li className='cl-regionItem'>
                 { item.state }
                 { item.countrycode !== 'undefined' ? <span className="cl-region-code text-uppercase">{item.countrycode}</span> :""}
             </li>
         );
     
         return (
-            <ul>{listItems.length > 0 ? listItems : <li className='cl-regionItem'>No region found</li>}</ul>
+            <ul onClick={this.regionClick}>{listItems.length > 0 ? listItems : <li className='cl-regionItem'>No region found</li>}</ul>
         );
     }
 
@@ -58,7 +91,7 @@ export default class Navbar extends Component{
         return(
             <React.Fragment>
             <div className="cl-navbar">
-                <input id="cl-navSearchbox" type="text" placeholder="city, state or country" onKeyUp={e => this.handleInputThrottled(e.target.value)} onFocus={this.onFocus} onBlur={this.onBlur}/>
+                <input id="cl-navSearchbox" type="text" placeholder="city, state or country" onKeyUp={e => this.handleInputThrottled(e.target.value)} onFocus={this.onFocus} onBlur={this.onBlur} autocomplete="off"/>
                 <label htmlFor="cl-navSearchbox" className="cl-searchIcon"><img  src={SearchIcon} alt=""/></label>
                 <Logo style={logoStyle}/>
                 <div style={searchResultStyle(focused)} className="cl-search-result">

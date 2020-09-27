@@ -19,6 +19,18 @@ export default class CovidLive extends Component{
         }
     }
 
+    handleCityChange = (cityDate) => {
+        this.setState({cityData: cityDate})
+    }
+
+    handleStateChange = (stateDate) => {
+        this.setState({stateData: stateDate})
+    }
+
+    handleCountryChange = (countryData) => {
+        this.setState({countryData: countryData})
+    }
+
     componentWillMount(){
         const { regionData } = this.props;
         Object.keys(regionData).forEach(data=>{
@@ -72,11 +84,11 @@ export default class CovidLive extends Component{
         return(
             <React.Fragment>
                 <Row className="px-2">
-                    <Navbar />
+                    <Navbar changeCity={this.handleCityChange} changeState={this.handleStateChange} changeCountry={this.handleCountryChange} />
                 </Row>
                 <Row className="my-3">
-                    <City {...cityData} isCityLoading={isCityLoading} />
-                    <State {...stateData} isStateLoading={isStateLoading}/>
+                    { cityData ? <City {...cityData} isCityLoading={isCityLoading} />:""}
+                    { stateData ? <State {...stateData} isStateLoading={isStateLoading}/>: ""}
                     <Country {...countryData} countrycode={country_code} isCountryLoading={isCountryLoading}/>
                     <Country {...worldData} isWorldLoading={isWorldLoading}/>
                 </Row>

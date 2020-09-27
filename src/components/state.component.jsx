@@ -2,14 +2,14 @@ import React from 'react';
 import { Col, Row } from 'react-bootstrap';
 import Loader from '../components/elements/loader.component';
 import { numAbb } from '../Utlis/numAbb';
-import { isDay } from '../Utlis/dayNight';
+// import { isDay } from '../Utlis/dayNight';
 
 const State = ({state, statecode, active, confirmed, recovered, deceased, deltaconfirmed, deltarecovered, deltadeaths, tested, testperthousand, isStateLoading})=>{
         return(
             <Col md={12} lg={8} className="px-2 mt-3">
                 <div className="cl-regionCard">
                     <p className="cl-regionName">{state} &#8226; {statecode}</p>
-                    { tested > 0 ? (<span className="cl-tested">Tested: <span>{tested}</span></span>) : ''}
+                    { tested > 0 ? (<span className="cl-tested">Tested: <span>{numAbb(tested)}</span></span>) : ''}
                     
                     <Loader isLoading={isStateLoading}/>
                     <Row className="m-0">

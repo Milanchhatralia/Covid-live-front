@@ -3,7 +3,7 @@ import { Col, Row } from 'react-bootstrap';
 import Loader from '../components/elements/loader.component';
 import { numAbb } from '../Utlis/numAbb';
 import WorldLogo from '../images/world.png';
-import { isDay } from '../Utlis/dayNight';
+// import { isDay } from '../Utlis/dayNight';
 
 const Country = ({country, countrycode, active, cases, recovered, deaths, critical, totalTests, todayCases,todayDeaths, casesPerOneMillion, deathsPerOneMillion, testsPerOneMillion, isCountryLoading}) => {
     
@@ -14,7 +14,7 @@ const Country = ({country, countrycode, active, cases, recovered, deaths, critic
                 <img className="flag" src={iconSrc} width="20px" alt=""/>
                 <p className="cl-regionName text-uppercase">{country}</p>
                 <Loader isLoading={isCountryLoading}/>
-                { totalTests > 0 ? (<span className="cl-tested">Tested: <span>{totalTests}</span></span>) : ''}
+                { totalTests > 0 ? (<span className="cl-tested">Tested: <span>{numAbb(totalTests)}</span></span>) : ''}
                 <Row className="m-0">
                     <Col xs={6} lg={2} className="cl-dataContainer cl-active clc-data mt-3">
                         <span>Active</span>
