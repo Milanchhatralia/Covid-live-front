@@ -4,7 +4,7 @@ import Loader from '../components/elements/loader.component';
 import { numAbb } from '../Utlis/numAbb';
 // import { isDay } from '../Utlis/dayNight';
 
-const State = ({state, statecode, active, confirmed, recovered, deceased, deltaconfirmed, deltarecovered, deltadeaths, tested, testperthousand, isStateLoading})=>{
+const State = ({state, statecode, active, confirmed, recovered, deceased, deltaconfirmed, deltarecovered, deltadeceased, tested, testperthousand, isStateLoading})=>{
         return(
             <Col md={12} lg={8} className="px-2 mt-3">
                 <div className="cl-regionCard">
@@ -23,7 +23,7 @@ const State = ({state, statecode, active, confirmed, recovered, deceased, deltac
                             <span>Confirmed</span>
                             <h4 style={dataColor(isStateLoading)}>
                                 { numAbb(confirmed) }
-                                { numAbb(deltaconfirmed) > 0 ?<span className="delta"> &#8593;{deltaconfirmed}</span> : ''}
+                                { deltaconfirmed > 0 ?<span className="delta"> &#8593;{deltaconfirmed}</span> : ''}
                             </h4>
                             
                         </Col>
@@ -38,14 +38,14 @@ const State = ({state, statecode, active, confirmed, recovered, deceased, deltac
                             <span>Recovered</span>
                             <h4 style={dataColor(isStateLoading)}>
                                 { numAbb(recovered) }
-                                { numAbb(deltarecovered) > 0 ?<span className="delta"> &#8593;{deltarecovered}</span> : ''}
+                                { deltarecovered > 0 ?<span className="delta"> &#8593;{deltarecovered}</span> : ''}
                             </h4>
                         </Col>
                         <Col xs={6} lg={4} className="cl-dataContainer cl-deceased mt-3">
                             <span>Deceased</span>
                             <h4 style={dataColor(isStateLoading)}>
                                 { numAbb(deceased) }
-                                { numAbb(deltadeaths) > 0 ?<span className="delta"> &#8593;{numAbb(deltadeaths)}</span> : ''}
+                                { deltadeceased > 0 ?<span className="delta"> &#8593;{numAbb(deltadeceased)}</span> : ''}
                             </h4>
                         </Col>
                         <Col xs={6} lg={4} className="cl-dataContainer cl-testesperkilo mt-3 d-block d-md-none">
