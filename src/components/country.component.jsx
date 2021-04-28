@@ -14,7 +14,7 @@ const Country = ({country, countrycode, active, cases, recovered, deaths, critic
                 <img className="flag" src={iconSrc} width="20px" alt=""/>
                 <p className="cl-regionName text-uppercase">{country}</p>
                 <Loader isLoading={isCountryLoading}/>
-                { totalTests > 0 ? (<span className="cl-tested">Tested: <span>{numAbb(totalTests)}</span></span>) : ''}
+                { totalTests > 0 ? (<span className="cl-card-chip">Tested: <span>{numAbb(totalTests)}</span></span>) : ''}
                 <Row className="m-0">
                     <Col xs={6} lg={2} className="cl-dataContainer cl-active clc-data mt-3">
                         <span>Active</span>
