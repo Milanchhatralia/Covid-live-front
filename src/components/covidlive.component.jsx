@@ -5,6 +5,7 @@ import { Row } from 'react-bootstrap';
 import City from './city.component'
 import State from './state.component'
 import Country from './country.component'
+import VaccineCenter from './vaccine.component'
 
 import Navbar from './navbar.component'
 
@@ -16,6 +17,8 @@ export default class CovidLive extends Component{
         super(props)
         this.state = {
             isLoading: false,
+            stateCode: props.stateCode,
+            countryCode: props.countryCode,
         }
     }
 
@@ -36,10 +39,9 @@ export default class CovidLive extends Component{
         Object.keys(regionData).forEach(data=>{
             this.setState({ [data]: regionData[data] });
         });
-        // this.setState({ isLoading: false });
 
-        var { city, residential, state, country, state_code, country_code} = this.props.regionData;
-        if (city === 'undefined' || city === '') city = residential;
+        let { city, state, country, stateCode, countryCode} = this.props.regionData;
+        
         // CityData
         fetchCovidCityData(city).then((res) => {
             this.setState({
@@ -79,19 +81,23 @@ export default class CovidLive extends Component{
     }
     
     render(){
-        let { country_code, isCityLoading, isStateLoading, isCountryLoading, isWorldLoading } = this.state;
+        let { countryCode, isCityLoading, isStateLoading, isCountryLoading, isWorldLoading } = this.state;
         let { cityData, stateData, countryData, worldData } = this.state;
+        const {city} = this.state;
         return(
             <React.Fragment>
                 <Row className="px-2">
                     <Navbar changeCity={this.handleCityChange} changeState={this.handleStateChange} changeCountry={this.handleCountryChange} />
                 </Row>
+                
                 <Row className="my-3">
                     { cityData ? <City {...cityData} isCityLoading={isCityLoading} />:""}
                     { stateData ? <State {...stateData} isStateLoading={isStateLoading}/>: ""}
-                    <Country {...countryData} countrycode={country_code} isCountryLoading={isCountryLoading}/>
+                    <Country {...countryData} countrycode={countryCode} isCountryLoading={isCountryLoading}/>
                     <Country {...worldData} isWorldLoading={isWorldLoading}/>
                 </Row>
+                { cityData && cityData.vaccine_centers ?<VaccineCenter city={cityData.city} vaccine_centers={cityData.vaccine_centers}/>: null}
+                
             </React.Fragment>      
         )
     }
